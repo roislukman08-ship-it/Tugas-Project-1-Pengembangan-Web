@@ -1,0 +1,344 @@
+/* ===== Halaman: satu kolom, rata tengah, muat satu layar ===== */
+.halaman {
+  --tinggi-tv: 64vh; /* tinggi TV ±64% tinggi layar */
+  --rasio: 1.3; /* lebar : tinggi TV */
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--s2);
+  /* Dinding ruang tamu yang hangat */
+  background: radial-gradient(ellipse at 50% 40%, #8a6446 0%, #5e4230 55%, #43301f 100%);
+}
+/* Di layar potret (HP) TV dibuat lebih tinggi supaya isi layar lega */
+@media (max-aspect-ratio: 1/1) {
+  .halaman { --rasio: 1.05; }
+}
+
+/* Cahaya kebiruan TV ke dinding (dianimasikan GSAP) */
+.cahaya {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 55% at 50% 55%,
+    rgba(120, 190, 255, 0.55), rgba(80, 140, 255, 0.2) 45%, transparent 72%);
+}
+
+.judul {
+  position: relative;
+  font: 700 clamp(32px, 5vh, 48px) / 1.1 'Fraunces', serif;
+  color: #ffe3b3;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+.subjudul {
+  position: relative;
+  margin-top: var(--s1);
+  font-size: clamp(16px, 2.2vh, 18px);
+  color: #f4dcc0;
+}
+
+/* ===== TV: ukuran tetap di semua fase ===== */
+.tv {
+  position: relative;
+  margin-top: var(--s2); /* subjudul -> TV */
+  width: min(94vw, calc(var(--tinggi-tv) * var(--rasio)));
+  aspect-ratio: var(--rasio);
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.45));
+}
+
+/* Antena kelinci */
+.antena { flex: 0 0 17%; position: relative; }
+.antena i {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(#e6e6e6, #888);
+  border-radius: 2px;
+  transform-origin: 50% 100%;
+}
+.antena i:nth-child(1) { transform: rotate(-30deg); }
+.antena i:nth-child(2) { transform: rotate(30deg); }
+.antena i::before { /* bola di ujung antena */
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: #d0d0d0;
+}
+.antena::after { /* dudukan antena */
+  content: '';
+  position: absolute;
+  left: 39%;
+  bottom: -3px;
+  width: 22%;
+  height: 14px;
+  border-radius: 50% 50% 0 0;
+  background: #2b2b2b;
+}
+
+/* Badan kayu walnut */
+.badan {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 2%;
+  padding: 2.2%;
+  border-radius: 14px;
+  background:
+    repeating-linear-gradient(92deg, rgba(0, 0, 0, 0.09) 0 2px, transparent 2px 7px),
+    linear-gradient(135deg, #7a4d2b, #4d2d17 60%, #3f2412);
+  box-shadow: inset 0 2px 0 rgba(255, 220, 170, 0.25), inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+}
+.bingkai {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  padding: 3%;
+  border-radius: 18px;
+  background: #16120f;
+  box-shadow: inset 0 0 8px #000;
+}
+
+/* Layar cembung */
+.layar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  container-type: size; /* supaya ukuran font bisa mengikuti tinggi layar (cqh) */
+  border-radius: 9% / 12%;
+  background: radial-gradient(ellipse at 40% 30%, #1b2a30, #070b0d 70%);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+.tv.hidup .layar { /* glow saat TV hidup */
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 36px 6px rgba(120, 190, 255, 0.5);
+}
+
+/* Isi layar: font pixel, awalnya tersembunyi (GSAP yang menampilkan) */
+.crt {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, #0c2a22, #04100c);
+  font-family: 'VT323', monospace;
+  font-size: clamp(18px, 7cqh, 28px);
+  line-height: 1.1;
+  color: #b6ffd0;
+  text-shadow: 0 0 6px rgba(120, 255, 180, 0.7);
+}
+.siaran {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center; /* isi di tengah layar secara vertikal */
+  justify-content: center;
+  padding: 5% 6%;
+  animation: kedip 5s infinite; /* sedikit flicker */
+}
+@keyframes kedip {
+  0%, 92%, 100% { opacity: 1; }
+  93% { opacity: 0.86; }
+  95% { opacity: 0.97; }
+  96% { opacity: 0.88; }
+}
+
+/* Formulir rapat di dalam layar */
+.formulir {
+  width: 100%;
+  max-width: 17em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+.formulir h2 {
+  font-size: 1em;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #ffe08a;
+}
+.formulir label { display: flex; flex-direction: column; gap: 1px; }
+.formulir input {
+  width: 100%;
+  height: 1.5em;
+  padding: 0 6px;
+  font: inherit;
+  color: #e8fff0;
+  text-shadow: inherit;
+  background: rgba(0, 30, 20, 0.7);
+  border: 1px solid #5fe39a;
+  border-radius: 2px;
+  outline: none;
+}
+.formulir input:focus-visible,
+.masuk:focus-visible { outline: 2px solid #ffe08a; outline-offset: 1px; }
+.galat { color: #ff9a8a; text-shadow: 0 0 6px rgba(255, 90, 70, 0.7); }
+.masuk {
+  width: 100%; /* selebar kolom */
+  height: 1.5em;
+  margin-top: 2px;
+  font: inherit;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #03180d;
+  text-shadow: none;
+  background: #7dffb0;
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+/* Lampu indikator di panel: cincin logam + kaca merah */
+.lampu {
+  position: relative;
+  flex: none;
+  width: 36%;
+  min-width: 24px;
+  max-width: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5a1a12, #2a0805 70%); /* kaca saat padam */
+  border: 3px solid #b9a27a; /* cincin logam */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 0 4px rgba(0, 0, 0, 0.8);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.lampu::after { /* kilap kaca */
+  content: '';
+  position: absolute;
+  top: 14%; left: 20%;
+  width: 28%; height: 22%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+}
+.lampu.nyala {
+  background: radial-gradient(circle at 40% 35%, #ffd0b0, #ff4a2e 45%, #c4160a);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px 2px rgba(255, 70, 40, 0.85), 0 0 18px 6px rgba(255, 70, 40, 0.45);
+}
+
+/* Fase sukses: color bars + papan ucapan */
+.sukses { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6%; }
+.bars {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #d8d8d8 0 14.28%, #d8d818 0 28.57%, #18d8d8 0 42.85%,
+    #18d818 0 57.14%, #d818d8 0 71.42%, #d81818 0 85.71%, #1818d8 0);
+}
+.salam {
+  position: relative;
+  max-width: 92%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1em;
+  padding: 0.4em 1em 0.5em;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  background: #000;
+  border: 2px solid #fff;
+  overflow-wrap: anywhere;
+}
+.salam strong { font-weight: 400; font-size: 1.35em; color: #ffe08a; text-shadow: 0 0 8px rgba(255, 224, 138, 0.7); }
+
+/* Lapisan efek di atas isi layar */
+.semut-wrap { position: absolute; inset: 0; z-index: 4; visibility: hidden; }
+.semut { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.scan { /* scanline */
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.28) 0 1px, transparent 1px 3px);
+}
+.kilat { position: absolute; inset: 0; z-index: 5; visibility: hidden; opacity: 0; background: #fff; }
+.titik { /* titik putih saat TV padam */
+  position: absolute; left: 50%; top: 50%; z-index: 8;
+  width: 10px; height: 10px; margin: -5px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 0 12px 5px #fff, 0 0 30px 12px rgba(150, 200, 255, 0.7);
+  visibility: hidden; opacity: 0;
+}
+.vinyet { position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55)); }
+.pantul { /* pantulan cahaya ruangan di kaca (terlihat saat TV mati) */
+  position: absolute; inset: 0; z-index: 7; pointer-events: none;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.14) 0, rgba(255, 255, 255, 0.03) 28%, transparent 40%),
+    radial-gradient(ellipse at 75% 85%, rgba(255, 180, 110, 0.1), transparent 50%);
+}
+
+/* Panel samping: knob + grille */
+.panel {
+  flex: 0 0 21%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8%;
+  padding: 6% 0;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+.knob {
+  position: relative;
+  flex: none;
+  display: block;
+  width: 70%;
+  min-width: 40px;
+  max-width: 54px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: radial-gradient(circle at 35% 30%, #f2e6cf, #a8946f 55%, #5f4f36);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.6), inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+}
+.knob::after { /* garis penunjuk di knob */
+  content: '';
+  position: absolute; top: 6%; left: 50%;
+  width: 3px; height: 30%; margin-left: -1.5px;
+  border-radius: 2px; background: #2a1b0e;
+}
+.knob:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
+.grille {
+  flex: 1;
+  width: 70%;
+  min-height: 24px;
+  border-radius: 6px;
+  background: repeating-linear-gradient(0deg, #1a0f08 0 3px, #6a4a30 3px 6px);
+  box-shadow: inset 0 0 4px #000;
+}
+
+/* Kaki TV */
+.kaki { flex: 0 0 4%; display: flex; justify-content: space-between; padding: 0 10%; }
+.kaki i { width: 9%; background: #2a1a0e; border-radius: 0 0 6px 6px; }
+
+/* Petunjuk dalam satu pill kecil di bawah TV */
+.petunjuk {
+  position: relative;
+  margin-top: var(--s2); /* TV -> petunjuk */
+  padding: 6px var(--s2);
+  font-size: 15px;
+  color: #ffe9c7;
+  background: rgba(30, 18, 10, 0.72);
+  border: 1px solid rgba(255, 220, 170, 0.3);
+  border-radius: 999px;
+}
+
+/* Hormati pengguna yang meminta animasi dikurangi */
+@media (prefers-reduced-motion: reduce) {
+  .siaran { animation: none; }
+}

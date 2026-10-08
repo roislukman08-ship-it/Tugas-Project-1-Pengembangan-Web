@@ -1,0 +1,30 @@
+/* Font Google: Fraunces & DM Sans untuk di luar layar, VT323 (pixel) untuk di dalam layar */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=DM+Sans:wght@400;500&family=VT323&display=swap');
+
+/* Reset sederhana supaya jarak antar elemen bisa kita atur sendiri */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Skala jarak yang dipakai di seluruh halaman: 8 / 16 / 24 / 32px */
+:root {
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: #43301f;
+  color: #fff1da;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
